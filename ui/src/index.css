@@ -1,0 +1,38 @@
+body {
+  background-color: #f8f9fa;
+}
+
+.card {
+  border-radius: 10px;
+  background-color: #f3f0f6;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.text-center {
+  color: #333;
+}
+
+button {
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+}
+
+button:hover {
+  text-decoration: none;
+  background-color: #0056b3;
+}
+
+button:focus {
+  outline: none;
+}
+
+hr {
+  margin: 0;
+  border: 0;
+  border-top: 1px solid #ddd;
+}

@@ -1,0 +1,21 @@
+{
+  "name": "cocktail-machine-ui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "electron-start": "concurrently \"npm start --prefix ui\" \"wait-on http://localhost:3000 && electron .\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^31.1.0",
+    "concurrently": "^6.3.0",
+    "wait-on": "^5.3.0"
+  }
+}
