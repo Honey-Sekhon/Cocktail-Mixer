@@ -42,7 +42,7 @@ const HomePage = () => {
             src={slotDrinks[selectedSlot] !== "None" ? image_paths[slotDrinks[selectedSlot]] : image_paths["default"]} 
             alt={slotDrinks[selectedSlot]} 
             fluid 
-            style={{ maxWidth: '200px' }} 
+            style={{ maxWidth: '300px' }} 
           />
         </Col>
         <Col md={6}>
@@ -57,7 +57,7 @@ const HomePage = () => {
                 {drinks_options.map((drink, index) => (
                   <React.Fragment key={index}>
                     <div className="d-flex justify-content-between align-items-center mb-2">
-                      <span style={{ fontSize: '40px' }}>{drink}</span>
+                      <span style={{ fontSize: '25px' }}>{drink}</span>
                       <Form.Check 
                         type="switch"
                         id={`drink-switch-${index}`}
