@@ -1,28 +1,41 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Container } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Container, Button } from 'react-bootstrap';
 
-function PreparationPage() {
+const PreparationPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const customProportions = location.state?.customProportions || {};
+
+  const [preparationComplete, setPreparationComplete] = useState(false);
 
   useEffect(() => {
+    // Simulate the preparation process
     const timer = setTimeout(() => {
-      navigate('/drink-made');
-    }, 5000); // Simulate 5 seconds of preparation time
+      setPreparationComplete(true);
+    }, 3000); // 3 seconds for the animation
 
     return () => clearTimeout(timer);
-  }, [navigate]);
+  }, []);
 
   return (
-    <Container>
-      <h1>Preparing Your Drink</h1>
-      <video width="400" controls autoPlay>
-        <source src="path-to-your-video.mp4" type="video/mp4" />
-        Your browser does not support HTML video.
-      </video>
-      <p>Please wait while we prepare your drink...</p>
+    <Container className="text-center mt-5">
+      {!preparationComplete ? (
+        <>
+          <h2>Your drink is being prepared...</h2>
+          <div className="spinner-border text-primary mt-3" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </>
+      ) : (
+        <>
+          <h2>Your drink is ready!</h2>
+          <Button variant="primary" className="mt-3" onClick={() => navigate('/')}>Make Another</Button>
+          <Button variant="secondary" className="mt-3 ml-3" onClick={() => navigate('/cocktails')}>Return to Cocktails Page</Button>
+        </>
+      )}
     </Container>
   );
-}
+};
 
 export default PreparationPage;

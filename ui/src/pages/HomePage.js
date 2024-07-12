@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Form, Button, Card, Image } from 'react-bootstrap';
+import { Container, Row, Col, Form, Card, Image, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { drinks_options, image_paths } from './data'; // Adjust the import according to your project structure
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const [selectedSlot, setSelectedSlot] = useState(1);
   const [slotDrinks, setSlotDrinks] = useState({
     1: "None",
     2: "None",
@@ -17,83 +16,75 @@ const HomePage = () => {
     setSlotDrinks((prev) => ({ ...prev, [slot]: drink }));
   };
 
-  const handleSlotChange = () => {
-    if (selectedSlot === 4) {
-      navigate('/cocktails', { state: { selectedDrinks: Object.values(slotDrinks) } });
-    } else {
-      setSelectedSlot((prev) => prev + 1);
-    }
-  };
-
-  const handleConfigure = () => {
+  const handleNext = () => {
     navigate('/cocktails', { state: { selectedDrinks: Object.values(slotDrinks) } });
-  };
-
-  const handleBack = () => {
-    setSelectedSlot((prev) => (prev === 1 ? 4 : prev - 1));
   };
 
   return (
     <Container>
       <h1 className="text-center mt-3">MIXEASY</h1>
-      <Row className="mt-4">
-        <Col md={6} className="text-center">
-          <Image 
-            src={slotDrinks[selectedSlot] !== "None" ? image_paths[slotDrinks[selectedSlot]] : image_paths["default"]} 
-            alt={slotDrinks[selectedSlot]} 
-            fluid 
-            style={{ maxWidth: '200px' }} 
-          />
-        </Col>
-        <Col md={6}>
-          <Card>
-            <Card.Body>
-              <Button variant="link" onClick={handleBack} className="mb-3" style={{ textDecoration: 'none', fontSize: '18px', position: 'absolute', top: '10px', left: '10px' }}>
-                &larr; Back
-              </Button>
-              <h3 className="text-center" style={{ fontWeight: 'bold' }}>{slotDrinks[selectedSlot]}</h3>
-              <p className="text-center">Slot {selectedSlot}</p>
-              <div style={{ maxHeight: '200px', overflowY: 'scroll', overflowX: 'hidden' }}>
-                {drinks_options.map((drink, index) => (
-                  <React.Fragment key={index}>
-                    <div className="d-flex justify-content-between align-items-center mb-2">
-                      <span style={{ fontSize: '40px' }}>{drink}</span>
-                      <Form.Check 
-                        type="switch"
-                        id={`drink-switch-${index}`}
-                        checked={slotDrinks[selectedSlot] === drink}
-                        onChange={() => handleSelectDrink(selectedSlot, drink)}
-                        style={{ transform: 'scale(2)', padding: '10px' }} // Increase the size of the toggle switch
-                      />
-                    </div>
-                    {index < drinks_options.length - 1 && <hr />} {/* Add a divider between items */}
-                  </React.Fragment>
-                ))}
-              </div>
-              <div className="d-flex justify-content-end mt-3">
-                {selectedSlot === 4 ? (
-                  <Button 
-                    variant="success" 
-                    className="rounded-corners" 
-                    onClick={handleConfigure}
-                    style={{ fontSize: '18px', padding: '5px 15px' }}
+      <Button onClick={handleNext} className="mb-3" style={{ textDecoration: 'none', fontSize: '18px', position: 'absolute', top: '10px', right: '10px', marginTop: '10px', marginRight: '10px' }}>
+        Next &rarr;
+      </Button>
+      <Row className="mt-4" style={{ maxWidth: '800px', margin: '0 auto' }}>
+        {[1, 2].map((slot) => (
+          <Col key={slot} md={6} className="text-center mb-4">
+            <Image
+              src={slotDrinks[slot] !== "None" ? image_paths[slotDrinks[slot]] : image_paths["default"]}
+              alt={slotDrinks[slot]}
+              fluid
+              style={{ maxWidth: '100px', maxHeight: '100px', marginBottom: '10px' }}
+            />
+            <Card>
+              <Card.Body>
+                <h5 className="text-center">Slot {slot}</h5>
+                <Form.Group>
+                  {/* <Form.Label>Select a Drink</Form.Label> */}
+                  <Form.Control
+                    as="select"
+                    value={slotDrinks[slot]}
+                    onChange={(e) => handleSelectDrink(slot, e.target.value)}
                   >
-                    Configure
-                  </Button>
-                ) : (
-                  <Button 
-                    variant="primary" 
-                    className="rounded-corners" 
-                    onClick={handleSlotChange}
-                    style={{ fontSize: '18px', padding: '5px 15px' }}
+                    <option value="None">None</option>
+                    {drinks_options.map((drink, index) => (
+                      <option key={index} value={drink}>{drink}</option>
+                    ))}
+                  </Form.Control>
+                </Form.Group>
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+      <Row className="mt-4" style={{ maxWidth: '800px', margin: '0 auto' }}>
+        {[3, 4].map((slot) => (
+          <Col key={slot} md={6} className="text-center mb-4">
+            <Image
+              src={slotDrinks[slot] !== "None" ? image_paths[slotDrinks[slot]] : image_paths["default"]}
+              alt={slotDrinks[slot]}
+              fluid
+              style={{ maxWidth: '100px', maxHeight: '100px', marginBottom: '20px' }}
+            />
+            <Card>
+              <Card.Body>
+                <h5 className="text-center">Slot {slot}</h5>
+                <Form.Group>
+                  <Form.Label>Select a Drink</Form.Label>
+                  <Form.Control
+                    as="select"
+                    value={slotDrinks[slot]}
+                    onChange={(e) => handleSelectDrink(slot, e.target.value)}
                   >
-                    Slot {selectedSlot + 1} →
-                  </Button>
-                )}
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
+                    <option value="None">None</option>
+                    {drinks_options.map((drink, index) => (
+                      <option key={index} value={drink}>{drink}</option>
+                    ))}
+                  </Form.Control>
+                </Form.Group>
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
       </Row>
     </Container>
   );
