@@ -130,9 +130,11 @@ const CocktailsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const selectedDrinks = location.state?.selectedDrinks || [];
+  const slotDrinks = location.state?.slotDrinks || {};
   const [customProportions, setCustomProportions] = useState({});
 
   console.log('Rendering CocktailsPage with selectedDrinks:', selectedDrinks);
+  console.log('Slot to Ingredient Mapping:', slotDrinks);
 
   const getPossibleCocktails = () => {
     return Object.entries(cocktails).filter(([_, ingredients]) =>
@@ -163,8 +165,23 @@ const CocktailsPage = () => {
 
   const handleMakeDrink = async () => {
     console.log('Button clicked for making drink with proportions:', customProportions);
+
+    // Map ingredient names to slot names
+    const slotsProportions = Object.entries(customProportions).reduce((acc, [ingredient, quantity]) => {
+      const slot = Object.keys(slotDrinks).find(key => slotDrinks[key] === ingredient);
+      if (slot) {
+        acc[`slot${slot}`] = quantity;
+      } else {
+        console.error(`No mapping found for ingredient: ${ingredient}`);
+      }
+      return acc;
+    }, {});
+
+    console.log('Mapped proportions:', slotsProportions);
+
     try {
-      await axios.post('http://<Raspberry Pi IP Address>:5000/control_pumps', customProportions);
+      const response = await axios.post('http://192.168.1.98:5000/control_pumps', slotsProportions);
+      console.log('Response from server:', response.data);
       navigate('/preparation', { state: { customProportions } });
     } catch (error) {
       console.error('Error making drink:', error);

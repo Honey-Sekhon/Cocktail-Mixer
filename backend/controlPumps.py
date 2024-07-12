@@ -6,6 +6,7 @@ from time import sleep
 app = Flask(__name__)
 CORS(app)
 
+# Define the GPIO pins where the relays (pumps) are connected
 PUMP_PINS = {
     "slot1": 17,
     "slot2": 22,
@@ -13,6 +14,7 @@ PUMP_PINS = {
     "slot4": 27
 }
 
+# Initialize the relays (pumps)
 pumps = {slot: OutputDevice(pin, active_high=False, initial_value=False) for slot, pin in PUMP_PINS.items()}
 
 def pump_on(pump):
