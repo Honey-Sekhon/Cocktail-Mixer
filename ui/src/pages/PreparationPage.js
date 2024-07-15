@@ -7,6 +7,9 @@ const PreparationPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const customProportions = location.state?.customProportions || {};
+  const selectedDrinks = location.state?.selectedDrinks || [];
+  const slotDrinks = location.state?.slotDrinks || {};
+
 
   const [preparationComplete, setPreparationComplete] = useState(false);
   const flowRate = 1.15; // ml per second
@@ -51,6 +54,7 @@ const PreparationPage = () => {
     return () => clearTimeout(timer);
   };
 
+
   return (
     <div>
       <h1 className="text-center mt-3">Requested Drink will take {drinkTimeInMinutes} minutes to be prepared.</h1>
@@ -60,7 +64,19 @@ const PreparationPage = () => {
             <h2>Your drink is ready!</h2>
             <div className="mt-3">
               <Button variant="primary" className="me-2" onClick={() => navigate('/')}>Back to Home</Button>
-              <Button variant="primary" className="me-2" onClick={() => navigate('/cocktails', { state: { selectedDrinks: [], slotDrinks: {}, customProportions: {} } })}>Cocktail Page</Button>
+              <Button
+                variant="primary"
+                className="me-2"
+                onClick={() => navigate('/cocktails', {
+                  state: {
+                    selectedDrinks: location.state.selectedDrinks,
+                    slotDrinks: location.state.slotDrinks,
+                    customProportions
+                  }
+                })}
+              >
+                Cocktail Page
+              </Button>
               <Button variant="success" onClick={handleMakeAnother}>Make Another</Button>
             </div>
           </>
@@ -71,5 +87,4 @@ const PreparationPage = () => {
     </div>
   );
 };
-
 export default PreparationPage;
