@@ -4,6 +4,7 @@ from gpiozero import OutputDevice
 from time import sleep
 import time
 import subprocess
+import threading
 
 app = Flask(__name__)
 CORS(app)
@@ -16,9 +17,6 @@ PUMP_PINS = {
     "slot4": 27
 }
 
-Bottle = []
-Duration = []
-# Initialize the relays (pumps)
 pumps = {slot: OutputDevice(pin, active_high=False, initial_value=False) for slot, pin in PUMP_PINS.items()}
 
 def pump_on(pump):
@@ -30,60 +28,38 @@ def pump_off(pump):
     print(f"Pump on GPIO {pump.pin.number} is OFF")
 
 def control_pump(slot, duration):
-            flag = 0
-            start_timer = time.time()
-            if(Duration[0]==0):
-                pump_off(pumps[0])
-            else:
-                pump_off(pumps[0])
-                flag = flag + 1
-            if(Duration[1]==0):
-                pump_off(pumps[1])
-            else:
-                pump_off(pumps[1])
-                flag = flag + 1
+    if slot in pumps:
+        pump = pumps[slot]
+        pump_on(pump)
+        sleep(duration)
+        pump_off(pump)
+    else:
+        print(f"Invalid slot: {slot}")
 
-            if(Duration[2]==0):
-                pump_off(pumps[2])
-            else:
-                pump_off(pumps[2])
-                flag = flag + 1
-
-            if(Duration[3]==0):
-                pump_off(pumps[3])
-            else:
-                pump_off(pumps[3])
-                flag = flag + 1
-
-            while(True):
-                if(time.time()-start_timer>=Duration[0]):
-                    pump_off(pumps[0])
-                    flag = flag - 1
-                if(time.time()-start_timer>=Duration[1]):
-                    pump_off(pumps[1])
-                    flag = flag - 1
-                if(time.time()-start_timer>=Duration[2]):
-                    pump_off(pumps[2])
-                    flag = flag - 1
-                if(time.time()-start_timer>=Duration[3]):
-                    pump_off(pumps[3])
-                    flag = flag - 1
-                
-                if(flag==0):
-                     break
+def control_pumps_parallel(durations):
+    threads = []
+    for slot, duration in durations.items():
+        thread = threading.Thread(target=control_pump, args=(slot, duration))
+        threads.append(thread)
+        thread.start()
+    
+    for thread in threads:
+        thread.join()
 
 @app.route('/control_pumps', methods=['POST'])
 def control_pumps():
     data = request.json
+    print("Received data:", data)
+    durations = {}
     for slot, amount in data.items():
-        duration = amount * 1.15  # 1.25 seconds per ml
-        Duration.append(duration)
-        Bottle.append(slot)
-        print("Duration: ", Duration)
-        print("Bottle:", Bottle)
+        try:
+            duration = float(amount) * 1.15  # 1.15 seconds per ml
+            durations[slot] = duration
+        except ValueError:
+            print(f"Invalid amount for slot {slot}: {amount}")
     
-
-        control_pump(slot, duration)
+    if durations:
+        control_pumps_parallel(durations)
         
     return jsonify({"status": "success"})
 
@@ -91,7 +67,7 @@ def control_pumps():
 def poweroff():
     try:
         # Run the poweroff command
-        subprocess.run(['sudo', 'poweroff'], check=True)
+        subprocess.run(['sudo', 'reboot'], check=True)
         return jsonify({"message": "Power off command executed successfully"}), 200
     except subprocess.CalledProcessError as e:
         return jsonify({"error": str(e)}), 500

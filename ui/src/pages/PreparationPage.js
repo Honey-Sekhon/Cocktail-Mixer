@@ -10,7 +10,6 @@ const PreparationPage = () => {
   const selectedDrinks = location.state?.selectedDrinks || [];
   const slotDrinks = location.state?.slotDrinks || {};
 
-
   const [preparationComplete, setPreparationComplete] = useState(false);
   const flowRate = 1.15; // ml per second
 
@@ -18,15 +17,23 @@ const PreparationPage = () => {
 
   // Function to calculate the total drink time based on customProportions and flowRate
   const calculateDrinkTime = () => {
-    const totalProportion = Object.values(customProportions).reduce((acc, proportion) => acc + parseFloat(proportion), 0);
-    console.log(totalProportion);
-    const drinkTime = totalProportion * flowRate; // in seconds
+    const highestProportion = Math.max(...Object.values(customProportions).map(proportion => parseFloat(proportion)));
+    console.log(highestProportion);
+    const drinkTime = highestProportion * flowRate + 5; // in seconds
     console.log(drinkTime);
     return drinkTime;
   };
-
+  
   const drinkTime = calculateDrinkTime();
   const drinkTimeInMinutes = (drinkTime / 60).toFixed(2); // converting seconds to minutes
+
+  // Map ingredient names to slot names with default value 0 if not selected
+  const slotsProportions = Object.keys(slotDrinks).reduce((acc, slot) => {
+    const ingredient = slotDrinks[slot];
+    const quantity = customProportions[ingredient] || 0; // Default to 0 if not selected
+    acc[`slot${slot}`] = parseFloat(quantity); // Ensure quantity is a number
+    return acc;
+  }, {});
 
   useEffect(() => {
     // Simulate the preparation process based on calculated drink time
@@ -37,23 +44,22 @@ const PreparationPage = () => {
     return () => clearTimeout(timer);
   }, [drinkTime]);
 
-  const handleMakeAnother = () => {
+  const handleMakeAnother = async () => {
     setPreparationComplete(false);
-        // try {
-    //   const response = await axios.post('http://192.168.1.98:5000/control_pumps', slotsProportions);
-    //   console.log('Response from server:', response.data);
-    //   // Optionally, you can update the state or trigger another action after the request
-    // } catch (error) {
-    //   console.error('Error making drink:', error);
-    //   // Optionally, you can handle the error (e.g., show an error message to the user)
-    // }
+    try {
+      const response = await axios.post('http://192.168.1.98:5000/control_pumps', slotsProportions);
+      console.log('Response from server:', response.data);
+      // Optionally, you can update the state or trigger another action after the request
+    } catch (error) {
+      console.error('Error making drink:', error);
+      // Optionally, you can handle the error (e.g., show an error message to the user)
+    }
     const timer = setTimeout(() => {
       setPreparationComplete(true);
     }, drinkTime * 1000); // converting seconds to milliseconds
 
     return () => clearTimeout(timer);
   };
-
 
   return (
     <div>
@@ -87,4 +93,5 @@ const PreparationPage = () => {
     </div>
   );
 };
+
 export default PreparationPage;
