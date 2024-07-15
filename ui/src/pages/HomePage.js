@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Form, Card, Image, Button,Modal } from 'react-bootstrap';
+import { Container, Row, Col, Form, Card, Image, Button, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { drinks_options, image_paths } from './data'; // Adjust the import according to your project structure
+import axios from 'axios';  // Import axios for making HTTP requests
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -26,12 +27,32 @@ const HomePage = () => {
       setShowErrorModal(true);
     }
   };
+
+  const handlePowerOff = async () => {
+    try {
+      await axios.post('http://192.168.1.98:5000/poweroff'); // Replace with your actual endpoint
+      console.log('Power off command sent');
+    } catch (error) {
+      console.error('Error sending power off command:', error);
+    }
+  };
+
   return (
-    <Container style={{maxHeight: '600px'}}>
-      <h1 className="text-center mt-3">MIXEASY</h1>
-      <Button onClick={handleNext} className="mb-3" style={{ textDecoration: 'none', fontSize: '18px', position: 'absolute', top: '10px', right: '10px', marginTop: '10px', marginRight: '10px' }}>
-        Next &rarr;
-      </Button>
+    <Container style={{ maxHeight: '600px' }}>
+
+      <div className="d-flex justify-content-between align-items-center mt-3">
+       
+      <Button variant="danger" onClick={handlePowerOff}>
+          <i className="bi bi-power"></i> Power Off
+        </Button>
+
+        <h1 className="text-center mt-3">MIXEASY</h1>
+
+
+        <Button className="mb-3" onClick={handleNext} style={{ textDecoration: 'none', fontSize: '18px' }}>
+          Next &rarr;
+        </Button>
+      </div>
       <Row className="mt-4" style={{ maxWidth: '800px', margin: '0 auto' }}>
         {[1, 2].map((slot) => (
           <Col key={slot} md={6} className="text-center mb-4">

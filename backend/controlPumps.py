@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from gpiozero import OutputDevice
 from time import sleep
+import subprocess
 
 app = Flask(__name__)
 CORS(app)
@@ -41,6 +42,15 @@ def control_pumps():
         duration = amount * 1.25  # 1.25 seconds per ml
         control_pump(slot, duration)
     return jsonify({"status": "success"})
+
+@app.route('/poweroff', methods=['POST'])
+def poweroff():
+    try:
+        # Run the poweroff command
+        subprocess.run(['sudo', 'poweroff'], check=True)
+        return jsonify({"message": "Power off command executed successfully"}), 200
+    except subprocess.CalledProcessError as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

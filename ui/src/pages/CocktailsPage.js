@@ -11,7 +11,7 @@
 //   const slotDrinks = location.state?.slotDrinks || {};
 //   const initialCustomProportions = location.state?.customProportions || {};
 //   const [customProportions, setCustomProportions] = useState(initialCustomProportions);
-  
+
 
 
 //   // Shows the selected drinks
@@ -73,7 +73,7 @@
 
 //   const handleMakeDrink = async () => {
 //     console.log('Button clicked for making drink with proportions:', customProportions);
-  
+
 //     // Map ingredient names to slot names
 //     const slotsProportions = Object.entries(customProportions).reduce((acc, [ingredient, quantity]) => {
 //       const slot = Object.keys(slotDrinks).find(key => slotDrinks[key] === ingredient);
@@ -84,12 +84,12 @@
 //       }
 //       return acc;
 //     }, {});
-  
+
 //     console.log('Mapped proportions:', slotsProportions);
-  
+
 //     // Navigate to the preparation page
 //     navigate('/preparation', { state: { customProportions } });
-  
+
 //     // try {
 //     //   const response = await axios.post('http://192.168.1.98:5000/control_pumps', slotsProportions);
 //     //   console.log('Response from server:', response.data);
@@ -99,7 +99,7 @@
 //     //   // Optionally, you can handle the error (e.g., show an error message to the user)
 //     // }
 //   };
-  
+
 
 //   useEffect(() => {
 //     console.log('Custom proportions updated:', customProportions);
@@ -258,16 +258,32 @@ const CocktailsPage = () => {
 
   const isFormValid = Object.values(customProportions).some(value => value !== '');
 
+  const handlePowerOff = async () => {
+    try {
+      await axios.post('http://192.168.1.98:5000/poweroff'); // Replace with your actual endpoint
+      console.log('Power off command sent');
+    } catch (error) {
+      console.error('Error sending power off command:', error);
+    }
+  };
+
   useEffect(() => {
     console.log('Custom proportions updated:', customProportions);
   }, [customProportions]);
 
   return (
     <Container>
-      <h1 className="text-center mt-3">Cocktails Available</h1>
-      <Button variant="link" onClick={() => navigate(-1)} className="mb-3" style={{ textDecoration: 'none', fontSize: '18px' }}>
-        &larr; Back
-      </Button>
+      <div className="d-flex justify-content-between align-items-center mt-3">
+        <Button variant="link" onClick={() => navigate(-1)} style={{ textDecoration: 'none', fontSize: '18px' }}>
+          &larr; Back
+        </Button>
+        <h1 className="text-center mt-3">Cocktails Available</h1>
+        <Button variant="danger" onClick={handlePowerOff}>
+          <i className="bi bi-power"></i> Power Off
+        </Button>
+      </div>
+     
+
       <Row>
         <Col md={6}>
           <h3>Select Proportions</h3>
@@ -288,12 +304,12 @@ const CocktailsPage = () => {
               </Form.Group>
             )
           ))}
-          {isFormValid &&(
-            <Button variant="success" className="mt-3" 
-             onClick={() => {
-              console.log('Button clicked for making drink');
-              handleMakeDrink();
-            }}>Make Drink</Button>
+          {isFormValid && (
+            <Button variant="success" className="mt-3"
+              onClick={() => {
+                console.log('Button clicked for making drink');
+                handleMakeDrink();
+              }}>Make Drink</Button>
           )}
         </Col>
         <Col md={6} style={{ maxHeight: '600px', overflowY: 'scroll', overflowX: 'hidden' }}>
