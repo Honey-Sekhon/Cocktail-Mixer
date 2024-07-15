@@ -50,7 +50,7 @@ const HomePage = () => {
 
 
         <Button className="mb-3" onClick={handleNext} style={{ textDecoration: 'none', fontSize: '18px' }}>
-          Next &rarr;
+         Next <i class= "bi bi-arrow-right"></i>
         </Button>
       </div>
       <Row className="mt-4" style={{ maxWidth: '800px', margin: '0 auto' }}>

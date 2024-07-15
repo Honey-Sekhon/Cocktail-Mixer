@@ -70,7 +70,7 @@ const CocktailsPage = () => {
     }
   };
 
-  const isFormValid = Object.values(customProportions).some(value => value !== '');
+  const isFormValid = Object.values(customProportions).some(value => value !== '' && parseFloat(value) > 0);
 
   const handlePowerOff = async () => {
     try {
@@ -87,15 +87,17 @@ const CocktailsPage = () => {
 
   return (
     <Container>
-      <div className="d-flex justify-content-between align-items-center mt-3">
-        <Button variant="link" onClick={() => navigate(-1)} style={{ textDecoration: 'none', fontSize: '18px' }}>
-          &larr; Back
+      <div className="d-flex justify-content-between align-items-center mt-3 mb-3" >
+        <Button onClick={() => navigate('/')} >
+          <i class= "bi bi-arrow-left-circle-fill"></i> Back
         </Button>
         <h1 className="text-center mt-3">Cocktails Available</h1>
         <Button variant="danger" onClick={handlePowerOff}>
           <i className="bi bi-power"></i> Power Off
         </Button>
       </div>
+
+      
 
 
       <Row>

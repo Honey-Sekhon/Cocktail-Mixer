@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Button } from 'react-bootstrap';
+import { Button, ProgressBar } from 'react-bootstrap';
 import axios from 'axios';  // Import axios for making HTTP requests
 
 const PreparationPage = () => {
@@ -10,6 +10,7 @@ const PreparationPage = () => {
   const selectedDrinks = location.state?.selectedDrinks || [];
   const slotDrinks = location.state?.slotDrinks || {};
 
+  const [progress, setProgress] = useState(0);
   const [preparationComplete, setPreparationComplete] = useState(false);
   const flowRate = 1.15; // ml per second
 
@@ -23,7 +24,7 @@ const PreparationPage = () => {
     console.log(drinkTime);
     return drinkTime;
   };
-  
+
   const drinkTime = calculateDrinkTime();
   const drinkTimeInMinutes = (drinkTime / 60).toFixed(2); // converting seconds to minutes
 
@@ -36,16 +37,28 @@ const PreparationPage = () => {
   }, {});
 
   useEffect(() => {
-    // Simulate the preparation process based on calculated drink time
-    const timer = setTimeout(() => {
-      setPreparationComplete(true);
-    }, drinkTime * 1000); // converting seconds to milliseconds
+    const interval = 100; // update every 100ms
+    const increment = (interval / (drinkTime * 1000)) * 100; // calculate percentage increment
 
-    return () => clearTimeout(timer);
+    const timer = setInterval(() => {
+      setProgress(prev => {
+        const nextProgress = prev + increment;
+        if (nextProgress >= 100) {
+          clearInterval(timer);
+          setPreparationComplete(true);
+          return 100;
+        }
+        return nextProgress;
+      });
+    }, interval);
+
+    return () => clearInterval(timer);
   }, [drinkTime]);
+
 
   const handleMakeAnother = async () => {
     setPreparationComplete(false);
+    setProgress(0);
     try {
       const response = await axios.post('http://192.168.1.98:5000/control_pumps', slotsProportions);
       console.log('Response from server:', response.data);
@@ -69,7 +82,7 @@ const PreparationPage = () => {
           <>
             <h2>Your drink is ready!</h2>
             <div className="mt-3">
-              <Button variant="primary" className="me-2" onClick={() => navigate('/')}>Back to Home</Button>
+              <Button variant="primary" className="me-2" onClick={() => navigate('/')}><i className="bi bi-house-fill"></i> Home</Button>
               <Button
                 variant="primary"
                 className="me-2"
@@ -80,15 +93,17 @@ const PreparationPage = () => {
                     customProportions
                   }
                 })}
-              >
-                Cocktail Page
+              ><i className="bi bi-list"></i>
+                 Cocktail Page
               </Button>
-              <Button variant="success" onClick={handleMakeAnother}>Make Another</Button>
+              <Button variant="success" onClick={handleMakeAnother}><i className="bi bi-arrow-repeat"></i> Make Another</Button>
             </div>
           </>
         ) : (
-          <h2>Preparing your drink...</h2>
-        )}
+          <>
+            <h2>Preparing your drink...</h2>
+            <ProgressBar now={progress} label={`${Math.round(progress)}%`} className="m-3" />
+          </>)}
       </div>
     </div>
   );
