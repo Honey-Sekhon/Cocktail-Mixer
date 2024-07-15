@@ -256,6 +256,8 @@ const CocktailsPage = () => {
     // }
   };
 
+  const isFormValid = Object.values(customProportions).some(value => value !== '');
+
   useEffect(() => {
     console.log('Custom proportions updated:', customProportions);
   }, [customProportions]);
@@ -286,7 +288,7 @@ const CocktailsPage = () => {
               </Form.Group>
             )
           ))}
-          {(
+          {isFormValid &&(
             <Button variant="success" className="mt-3" 
              onClick={() => {
               console.log('Button clicked for making drink');
