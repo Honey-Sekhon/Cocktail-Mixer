@@ -56,6 +56,8 @@ export const drinks_options = [
 
 // Dictionary mapping drinks and mixers to image files
 export const image_paths = {
+  "Mint Leaves Syrup": require('./images/mintSyrup.png'),
+  "Sugar Syrup": require('./images/sugarSyrup.png'),
   "Rum": require('./images/rum.png'),
   "Vodka": require('./images/vodka.png'),
   "Tequila": require('./images/tequila.png'),
