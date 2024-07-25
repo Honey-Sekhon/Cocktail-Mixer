@@ -31,6 +31,7 @@ const HomePage = () => {
   const handlePowerOff = async () => {
     try {
       await axios.post('http://192.168.1.98:5000/poweroff'); // Replace with your actual endpoint
+      // 207.23.194.44
       console.log('Power off command sent');
     } catch (error) {
       console.error('Error sending power off command:', error);

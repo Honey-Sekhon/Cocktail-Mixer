@@ -181,6 +181,8 @@ const PreparationPage = () => {
 
     try {
       const response = await axios.post('http://192.168.1.98:5000/control_pumps', slotsProportions);
+
+      // const response = await axios.post('http://207.23.194.44:5000/control_pumps', slotsProportions);
       console.log('Response from server:', response.data);
       // Optionally, you can update the state or trigger another action after the request
     } catch (error) {

@@ -67,7 +67,7 @@ def control_pumps():
 def poweroff():
     try:
         # Run the poweroff command
-        subprocess.run(['sudo', 'reboot'], check=True)
+        subprocess.run(['sudo', 'poweroff'], check=True)
         return jsonify({"message": "Power off command executed successfully"}), 200
     except subprocess.CalledProcessError as e:
         return jsonify({"error": str(e)}), 500

@@ -62,19 +62,22 @@ const CocktailsPage = () => {
 
     try {
       const response = await axios.post('http://192.168.1.98:5000/control_pumps', slotsProportions);
+      // sfu
+      // const response = await axios.post('http://207.23.194.44:5000/control_pumps', slotsProportions);
       console.log('Response from server:', response.data);
       // Optionally, you can update the state or trigger another action after the request
     } catch (error) {
       console.error('Error making drink:', error);
       // Optionally, you can handle the error (e.g., show an error message to the user)
     }
+
   };
 
   const isFormValid = Object.values(customProportions).some(value => value !== '' && parseFloat(value) > 0);
 
   const handlePowerOff = async () => {
     try {
-      await axios.post('http://192.168.1.98:5000/poweroff'); // Replace with your actual endpoint
+      await axios.post('http://207.23.194.44:5000/poweroff'); // Replace with your actual endpoint
       console.log('Power off command sent');
     } catch (error) {
       console.error('Error sending power off command:', error);
